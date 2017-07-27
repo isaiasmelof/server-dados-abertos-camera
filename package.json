@@ -1,0 +1,22 @@
+{
+  "name": "server-dados-abertos-camera",
+  "version": "1.0.0",
+  "description": "Servidor que irá realizar consultas ao portal de dados abertos e oferecer dados tratados a aplicações que os solicite.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaiasmelof/server-dados-abertos-camera.git"
+  },
+  "author": "Isaias Melo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/isaiasmelof/server-dados-abertos-camera/issues"
+  },
+  "homepage": "https://github.com/isaiasmelof/server-dados-abertos-camera#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
