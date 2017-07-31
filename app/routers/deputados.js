@@ -21,6 +21,8 @@ app.get('/allDeputados',(req, res, err) => {
    
     Ex: Caso seja enviado os parametros uf e partido, o deputado só será retornado como resultado caso o partido e a uf estejam igual ao filtro. 
     Caso seja enviado apenas a uf, somente este criterio será avaliado.
+
+    Caso não seja encontrado nenhum deputado, é enviado um JSON com a chave 'erro' explicando o motivo do erro.
 */
 app.get('/deputados',(req, res, err)=> {
     request({uri: 'http://www.camara.leg.br/SitCamaraWS/Deputados.asmx/ObterDeputados',
@@ -33,7 +35,13 @@ app.get('/deputados',(req, res, err)=> {
         var newArray = objJson.deputados.deputado.filter((deputado) => {
             return filtrarDeputado(deputado, parametros)
         })
-        res.status(200).json(newArray)
+
+        if(newArray.length > 0){
+            res.status(200).json(newArray)
+        } else {
+            res.status(500).json({'erro':'Não possível recuperar dados de Deputados com os parâmetros enviados.'})
+        }
+        
     })    
 })
 
@@ -61,4 +69,4 @@ function filtrarDeputado(deputado /* Objeto do Deputado */, parametros /* Query 
     }
     return retorno
 }
-app.listen(3000);
+app.listen(3000)
