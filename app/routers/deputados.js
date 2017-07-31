@@ -56,7 +56,6 @@ function filtrarDeputado(deputado /* Objeto do Deputado */, parametros /* Query 
     var retorno = true
 
     if(parametros.partido) {
-        console.log(deputado.partido)
         retorno = retorno && (parametros.partido == deputado.partido)
     }
 
