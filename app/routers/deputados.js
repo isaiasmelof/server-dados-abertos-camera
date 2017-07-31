@@ -1,10 +1,10 @@
 var express = require('express')
+var router = express.Router()
 var request = require('request')
-var parser = require('xml2json');
-var app = express()
+var parser = require('xml2json')
 
 //Rota que recupera todos os deputados
-app.get('/allDeputados',(req, res, err) => {
+router.get('/allDeputados',(req, res, err) => {
    request({uri: 'http://www.camara.leg.br/SitCamaraWS/Deputados.asmx/ObterDeputados',
             method: 'GET'}, function (error, response, body){
         res.set('Content-Type', 'application/json');
@@ -24,7 +24,7 @@ app.get('/allDeputados',(req, res, err) => {
 
     Caso não seja encontrado nenhum deputado, é enviado um JSON com a chave 'erro' explicando o motivo do erro.
 */
-app.get('/deputados',(req, res, err)=> {
+router.get('/deputados',(req, res, err)=> {
     request({uri: 'http://www.camara.leg.br/SitCamaraWS/Deputados.asmx/ObterDeputados',
             method: 'GET'}, function (error, response, body){
         res.set('Content-Type', 'application/json');
@@ -68,4 +68,4 @@ function filtrarDeputado(deputado /* Objeto do Deputado */, parametros /* Query 
     }
     return retorno
 }
-app.listen(3000)
+module.exports = router
