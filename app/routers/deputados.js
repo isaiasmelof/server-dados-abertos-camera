@@ -3,7 +3,10 @@ var router = express.Router()
 var request = require('request')
 var parser = require('xml2json')
 
-//Rota que recupera todos os deputados
+/**
+ *  Rota que recupera todos os deputados.
+ *  @return JSON com os dados dos deputados em atividade.
+ */
 router.get('/allDeputados',(req, res, err) => {
    request({uri: 'http://www.camara.leg.br/SitCamaraWS/Deputados.asmx/ObterDeputados',
             method: 'GET'}, function (error, response, body){
@@ -30,8 +33,14 @@ router.get('/deputados',(req, res, err)=> {
         res.set('Content-Type', 'application/json');
         var parametros = req.query
 
+        //verifica se o usuario informou os parametros de filtro
+        if(!parametros.partido && !parametros.uf && !parametros.nome) {
+            res.status(400).json({'error':'Nenhum dos parametros (uf, partido, nome) foi informado.'})
+        }
+        
+        //transformando para um objeto JSON
         var objJson = JSON.parse(parser.toJson(body))
-
+       
         var newArray = objJson.deputados.deputado.filter((deputado) => {
             return filtrarDeputado(deputado, parametros)
         })
