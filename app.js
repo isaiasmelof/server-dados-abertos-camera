@@ -7,6 +7,6 @@ app.use(deputadosRoutes)
 app.use(proposicoesRoutes)
 
 app.get('/',(req,res,err)=>{
-    res.send('Server Up!')
+    res.send({'msg':' bem vindo ao meu server'})
 })
 app.listen(3000)

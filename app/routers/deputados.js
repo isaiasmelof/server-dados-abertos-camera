@@ -1,7 +1,7 @@
-var express = require('express')
-var router = express.Router()
-var request = require('request')
-var parser = require('xml2json')
+const express = require('express')
+const router = express.Router()
+const request = require('request')
+const parser = require('xml2json')
 
 /**
  *  Rota que recupera todos os deputados.
