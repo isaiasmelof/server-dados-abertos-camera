@@ -6,7 +6,7 @@ var app = express()
 app.use(deputadosRoutes)
 app.use(proposicoesRoutes)
 
-app.get('/',(req,res,err)=>{
+app.get('/home ',(req,res,err)=>{
     res.send({'msg':' bem vindo ao meu server'})
 })
 app.listen(3000)
