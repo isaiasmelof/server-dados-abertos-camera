@@ -63,7 +63,7 @@ router.get('/proposicoesVotadasEmPlenario',(req,res,err)=> {
     res.set('Content-Type', 'application/json')
     var stringFiltros =  prepareUrlRequest(req.query, parametersRequestProposicoesVotadas)
     if (stringFiltros) {
-        getProposicoesVotadasEmPlenario(urlGetProposicoesVotadasEmPlenario+stringFiltros,(body)=> {
+        getProposicoes(urlGetProposicoesVotadasEmPlenario+stringFiltros,(body)=> {
             res.status(200)
             res.send(body)
         })
@@ -77,7 +77,7 @@ router.get('/votosProposicao', (req, res, err) => {
     res.set('Content-Type', 'application/json')
     var stringFiltros =  prepareUrlRequest(req.query, parametrosRequestVotacaoProposicao)
     if(stringFiltros) {
-        getProposicoes(urlGetVotosProposicao+stringFiltros, (body)=>{
+        getVotosProposicao(urlGetVotosProposicao+stringFiltros, (body)=>{
             res.status(200)
             res.send(body)
         })
@@ -141,10 +141,14 @@ function getProposicoes (url, getBody) {
    })
 }
 
-function getProposicoesVotadasEmPlenario (url, getBody) {
+function getVotosProposicao (url, getBody) {
     request({uri: url, 
             method: 'GET'}, function(error,response,body){
-        getBody(parser.toJson(body))
+        try{
+            getBody(parser.toJson(body))
+        }catch (err) {
+            getBody({'error':'Não existe votação para a proposição desejada.'})
+        }
     })
 }
 

@@ -10,7 +10,7 @@ const parser = require('xml2json')
 router.get('/allDeputados',(req, res, err) => {
    request({uri: 'http://www.camara.leg.br/SitCamaraWS/Deputados.asmx/ObterDeputados',
             method: 'GET'}, function (error, response, body){
-        res.set('Content-Type', 'application/json');
+        res.set('Content-Type', 'application/json')
         res.send(parser.toJson(body))
    })
 })
@@ -30,7 +30,7 @@ router.get('/allDeputados',(req, res, err) => {
 router.get('/deputados',(req, res, err)=> {
     request({uri: 'http://www.camara.leg.br/SitCamaraWS/Deputados.asmx/ObterDeputados',
             method: 'GET'}, function (error, response, body){
-        res.set('Content-Type', 'application/json');
+        res.set('Content-Type', 'application/json')
         var parametros = req.query
 
         //verifica se o usuario informou os parametros de filtro
