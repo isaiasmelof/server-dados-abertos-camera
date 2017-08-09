@@ -10,7 +10,7 @@ const parametersResquestPreposicoes = ['sigla', 'numero','ano','datapresentacaoi
 const parametersRequestPreposicoesVotadas = ['ano','tipo']
 
 //Parametros necessarios para fazer uma requisicao que recupera as informacoes de voto de uma proposicao
-const parametrosRequestVotacaoPreposicao = ['tipo','numero','ano']
+const parametrosRequestVotacaoProposicao = ['tipo','numero','ano']
 
 //Core da url que recupera proposicoes em geral - esta deve ser concatenada com os parametros desejados.
 const urlGetProposicoes = 'http://www.camara.leg.br/SitCamaraWS/Proposicoes.asmx/ListarProposicoes?'
@@ -73,9 +73,9 @@ router.get('/preposicoesVotadasEmPlenario',(req,res,err)=> {
     }
 })
 
-router.get('/votosPreposicao', (req, res, err) => {
+router.get('/votosProposicao', (req, res, err) => {
     res.set('Content-Type', 'application/json')
-    var stringFiltros =  prepareUrlRequest(req.query, parametrosRequestVotacaoPreposicao)
+    var stringFiltros =  prepareUrlRequest(req.query, parametrosRequestVotacaoProposicao)
     if(stringFiltros) {
         getPreposicoes(urlGetVotosProposicao+stringFiltros, (body)=>{
             res.status(200)
