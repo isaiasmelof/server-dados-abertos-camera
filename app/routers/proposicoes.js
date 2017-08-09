@@ -26,7 +26,7 @@ router.get('/proposicoes',(req, res, err) => {
     res.set('Content-Type', 'application/json')
     var stringFiltros =  prepareUrlRequest(req.query, parametersResquestProposicoes)
     if(stringFiltros) {
-        getProposicoes(urlGetProposicoes+stringFiltros, (body)=>{
+        getDadosByRequisicao(urlGetProposicoes+stringFiltros, (body)=>{
             res.status(200)
             res.send(body)
         })
@@ -43,7 +43,7 @@ router.get('/proposicoesPorPalavraChave/:palavraChave',(req,res,err)=>{
     var stringFiltros =  prepareUrlRequest(req.query, parametersResquestProposicoes)
 
     if(stringFiltros) {
-        getProposicoes(urlGetProposicoes+stringFiltros, (body)=>{
+        getDadosByRequisicao(urlGetProposicoes+stringFiltros, (body)=>{
         
         var objJson = JSON.parse(body)
         var array = objJson.proposicoes.proposicao.filter((proposicao)=>{
@@ -63,7 +63,7 @@ router.get('/proposicoesVotadasEmPlenario',(req,res,err)=> {
     res.set('Content-Type', 'application/json')
     var stringFiltros =  prepareUrlRequest(req.query, parametersRequestProposicoesVotadas)
     if (stringFiltros) {
-        getProposicoes(urlGetProposicoesVotadasEmPlenario+stringFiltros,(body)=> {
+        getDadosByRequisicao(urlGetProposicoesVotadasEmPlenario+stringFiltros,(body)=> {
             res.status(200)
             res.send(body)
         })
@@ -77,7 +77,7 @@ router.get('/votosProposicao', (req, res, err) => {
     res.set('Content-Type', 'application/json')
     var stringFiltros =  prepareUrlRequest(req.query, parametrosRequestVotacaoProposicao)
     if(stringFiltros) {
-        getVotosProposicao(urlGetVotosProposicao+stringFiltros, (body)=>{
+        getDadosByRequisicao(urlGetVotosProposicao+stringFiltros, (body)=>{
             res.status(200)
             res.send(body)
         })
@@ -133,26 +133,14 @@ function prepareUrlRequest(parametros, parametersRequest){
     }  
 }
 
-function getProposicoes (url, getBody) {   
+function getDadosByRequisicao (url, getBody) {   
     request({uri: url,
             method: 'GET'}, function (error, response, body){
         try{
             getBody(parser.toJson(body))
         }catch (err) {
-            getBody({'error':'Error ao recuperar os dados. Verifique os parametros enviados e tente novamente.'})
+            getBody({'error':err.message})
         }
    })
 }
-
-function getVotosProposicao (url, getBody) {
-    request({uri: url, 
-            method: 'GET'}, function(error,response,body){
-        try{
-            getBody(parser.toJson(body))
-        }catch (err) {
-            getBody({'error':'Não existe votação para a proposição desejada.'})
-        }
-    })
-}
-
 module.exports = router
