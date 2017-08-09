@@ -65,15 +65,15 @@ function filtrarDeputado(deputado /* Objeto do Deputado */, parametros /* Query 
     var retorno = true
 
     if(parametros.partido) {
-        retorno = retorno && (parametros.partido == deputado.partido)
+        retorno = retorno && (parametros.partido.toLowerCase() == deputado.partido.toLowerCase())
     }
 
     if(parametros.nome){
-         retorno = retorno && (deputado.nome.includes(parametros.nome))
+         retorno = retorno && (deputado.nome.toLowerCase().includes(parametros.nome.toLowerCase()))
     }
     
     if(parametros.uf){
-        retorno = retorno && (deputado.uf == parametros.uf)
+        retorno = retorno && (deputado.uf.toLowerCase() == parametros.uf.toLowerCase())
     }
     return retorno
 }
