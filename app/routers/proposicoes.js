@@ -4,10 +4,10 @@ const request = require('request')
 const parser = require('xml2json')
 
 //Parametros necessarios para fazer uma requisicao que recupera proposicoes em geral
-const parametersResquestPreposicoes = ['sigla', 'numero','ano','datapresentacaoini','datapresentacaofim','partenomeautor','idtipoautor','siglapartidoautor','siglaufautor','generoautor','codestado','codorgaoestado','emtramitacao']
+const parametersResquestProposicoes = ['sigla', 'numero','ano','datapresentacaoini','datapresentacaofim','partenomeautor','idtipoautor','siglapartidoautor','siglaufautor','generoautor','codestado','codorgaoestado','emtramitacao']
 
 //Parametros necessarios para fazer uma requisicao que recupera proposicoes votadas em plenario
-const parametersRequestPreposicoesVotadas = ['ano','tipo']
+const parametersRequestProposicoesVotadas = ['ano','tipo']
 
 //Parametros necessarios para fazer uma requisicao que recupera as informacoes de voto de uma proposicao
 const parametrosRequestVotacaoProposicao = ['tipo','numero','ano']
@@ -24,9 +24,9 @@ const urlGetVotosProposicao = 'http://www.camara.leg.br/SitCamaraWS/Proposicoes.
 //Buscar proposicoes passando os parametros padrões disponiveis
 router.get('/proposicoes',(req, res, err) => {
     res.set('Content-Type', 'application/json')
-    var stringFiltros =  prepareUrlRequest(req.query, parametersResquestPreposicoes)
+    var stringFiltros =  prepareUrlRequest(req.query, parametersResquestProposicoes)
     if(stringFiltros) {
-        getPreposicoes(urlGetProposicoes+stringFiltros, (body)=>{
+        getProposicoes(urlGetProposicoes+stringFiltros, (body)=>{
             res.status(200)
             res.send(body)
         })
@@ -40,10 +40,10 @@ router.get('/proposicoes',(req, res, err) => {
 //Enviar juntamente na requisica os parametros necessarios na busca de proposicoes.
 router.get('/proposicoesPorPalavraChave/:palavraChave',(req,res,err)=>{
     res.set('Content-Type', 'application/json')
-    var stringFiltros =  prepareUrlRequest(req.query, parametersResquestPreposicoes)
+    var stringFiltros =  prepareUrlRequest(req.query, parametersResquestProposicoes)
 
     if(stringFiltros) {
-        getPreposicoes(urlGetProposicoes+stringFiltros, (body)=>{
+        getProposicoes(urlGetProposicoes+stringFiltros, (body)=>{
         
         var objJson = JSON.parse(body)
         var array = objJson.proposicoes.proposicao.filter((proposicao)=>{
@@ -58,12 +58,12 @@ router.get('/proposicoesPorPalavraChave/:palavraChave',(req,res,err)=>{
     }
 })
 
-router.get('/preposicoesVotadasEmPlenario',(req,res,err)=> {
+router.get('/proposicoesVotadasEmPlenario',(req,res,err)=> {
     
     res.set('Content-Type', 'application/json')
-    var stringFiltros =  prepareUrlRequest(req.query, parametersRequestPreposicoesVotadas)
+    var stringFiltros =  prepareUrlRequest(req.query, parametersRequestProposicoesVotadas)
     if (stringFiltros) {
-        getPreposicoesVotadasEmPlenario(urlGetProposicoesVotadasEmPlenario+stringFiltros,(body)=> {
+        getProposicoesVotadasEmPlenario(urlGetProposicoesVotadasEmPlenario+stringFiltros,(body)=> {
             res.status(200)
             res.send(body)
         })
@@ -77,7 +77,7 @@ router.get('/votosProposicao', (req, res, err) => {
     res.set('Content-Type', 'application/json')
     var stringFiltros =  prepareUrlRequest(req.query, parametrosRequestVotacaoProposicao)
     if(stringFiltros) {
-        getPreposicoes(urlGetVotosProposicao+stringFiltros, (body)=>{
+        getProposicoes(urlGetVotosProposicao+stringFiltros, (body)=>{
             res.status(200)
             res.send(body)
         })
@@ -133,7 +133,7 @@ function prepareUrlRequest(parametros, parametersRequest){
     }  
 }
 
-function getPreposicoes (url, getBody) {   
+function getProposicoes (url, getBody) {   
     request({uri: url,
             method: 'GET'}, function (error, response, body){
     
@@ -141,7 +141,7 @@ function getPreposicoes (url, getBody) {
    })
 }
 
-function getPreposicoesVotadasEmPlenario (url, getBody) {
+function getProposicoesVotadasEmPlenario (url, getBody) {
     request({uri: url, 
             method: 'GET'}, function(error,response,body){
         getBody(parser.toJson(body))
