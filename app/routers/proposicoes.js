@@ -136,8 +136,11 @@ function prepareUrlRequest(parametros, parametersRequest){
 function getProposicoes (url, getBody) {   
     request({uri: url,
             method: 'GET'}, function (error, response, body){
-    
-        getBody(parser.toJson(body))
+        try{
+            getBody(parser.toJson(body))
+        }catch (err) {
+            getBody({'error':'Error ao recuperar os dados. Verifique os parametros enviados e tente novamente.'})
+        }
    })
 }
 
