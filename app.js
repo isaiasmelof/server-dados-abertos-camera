@@ -16,3 +16,9 @@ app.get('/home ',(req,res,err)=>{
 app.listen(app.get('port'), function(){
     console.log('App is running server is listening on port',app.get('port'))
 })
+
+//Faz uma requiscao a cada 5 min
+var http = require('http')
+setInterval(() => {
+  http.get('http://inspetor.herokuapp.com')
+}, 300000) 
