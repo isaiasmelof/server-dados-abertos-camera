@@ -3,16 +3,32 @@ const router = express.Router()
 const request = require('request')
 const parser = require('xml2json')
 
+//URL utilizada para recuperar os dados de deputados
+const urlAllDeputados = 'http://www.camara.leg.br/SitCamaraWS/Deputados.asmx/ObterDeputados'
+
+//Objeto JSON guardado em momoria no qual é armazenado a lista de deputados
+var deputados 
+
+//Objeto Json com o id de cadastro do Parlamentar e a sua respectiva url para sua fota.
+var jsonIdCadastroUrlFotoDeputados
+
+//Caso o objeto esteja nulo, é realizado a carga dos dados imediatamente
+if (!deputados) {
+    getDeputados(urlAllDeputados, (body) => {
+        if (body) {
+            deputados = body
+            dicIdDeputadosUrlFoto = getDicIdDeputadosUrlFoto()
+        }
+    })
+}
+
 /**
  *  Rota que recupera todos os deputados.
  *  @return JSON com os dados dos deputados em atividade.
  */
 router.get('/allDeputados',(req, res, err) => {
-   request({uri: 'http://www.camara.leg.br/SitCamaraWS/Deputados.asmx/ObterDeputados',
-            method: 'GET'}, function (error, response, body){
-        res.set('Content-Type', 'application/json')
-        res.send(parser.toJson(body))
-   })
+    res.set('Content-Type', 'application/json')
+    res.status(200).send(deputados)
 })
 /* Rota que recupera deputado(s) que atedem a um determinado filtro enviado no parametro da requisicao. Os filtros aceitos são:
     
@@ -28,31 +44,46 @@ router.get('/allDeputados',(req, res, err) => {
     Caso não seja encontrado nenhum deputado, é enviado um JSON com a chave 'erro' explicando o motivo do erro.
 */
 router.get('/deputados',(req, res, err)=> {
-    request({uri: 'http://www.camara.leg.br/SitCamaraWS/Deputados.asmx/ObterDeputados',
-            method: 'GET'}, function (error, response, body){
-        res.set('Content-Type', 'application/json')
-        var parametros = req.query
+    res.set('Content-Type', 'application/json')
+    var parametros = req.query
 
-        //verifica se o usuario informou os parametros de filtro
-        if(!parametros.partido && !parametros.uf && !parametros.nome) {
-            res.status(400).json({'error':'Nenhum dos parametros (uf, partido, nome) foi informado.'})
-        }
-        
-        //transformando para um objeto JSON
-        var objJson = JSON.parse(parser.toJson(body))
-       
-        var newArray = objJson.deputados.deputado.filter((deputado) => {
-            return filtrarDeputado(deputado, parametros)
-        })
+    //verifica se o usuario informou os parametros de filtro
+    if(!parametros.partido && !parametros.uf && !parametros.nome) {
+        res.status(400).json({'error':'Nenhum dos parametros (uf, partido, nome) foi informado.'})
+    }
+    
+    //transformando para um objeto JSON
+    var objJson = JSON.parse(deputados)
+    
+    var newArray = objJson.deputados.deputado.filter((deputado) => {
+        return filtrarDeputado(deputado, parametros)
+    })
 
-        if(newArray.length > 0){
-            res.status(200).json(newArray)
-        } else {
-            res.status(500).json({'erro':'Não possível recuperar dados de Deputados com os parâmetros enviados.'})
-        }
-        
-    })    
+    if(newArray.length > 0){
+        res.status(200).json(newArray)
+    } else {
+        res.status(500).json({'erro':'Não possível recuperar dados de Deputados com os parâmetros enviados.'})
+    }
+    
 })
+
+/**
+ * Rota que retorna um mapeamento com o id e a foto dos parlamentares.
+ */
+router.get('/urlFotosDeputados', (req,res,err)=>{
+    res.set('Content-Type', 'application/json')
+    res.send(jsonIdCadastroUrlFotoDeputados)
+})
+
+
+function getDicIdDeputadosUrlFoto() {
+    var retorno = []
+    var objJson = JSON.parse(deputados)
+    objJson.deputados.deputado.forEach(function(element) {
+        retorno.push({'ideCadastro': element.ideCadastro, 'urlFoto' : element.urlFoto})
+    })
+    return retorno
+}
 
 /**
  * Avalia se um deputado atende aos parametros de filtro enviado.
@@ -77,4 +108,27 @@ function filtrarDeputado(deputado /* Objeto do Deputado */, parametros /* Query 
     }
     return retorno
 }
+
+
+function getDeputados(url, completion) {
+    request({uri: 'http://www.camara.leg.br/SitCamaraWS/Deputados.asmx/ObterDeputados',
+            method: 'GET'}, function (error, response, body){
+        try{
+            completion(parser.toJson(body))
+        }catch (err) {
+            completion({'error':err.message})
+        }
+   })
+}
+
+// Executa a cada 24h uma requisicao para o servidor da camera dos deputados a fim de atualizar a lista de deputados
+setInterval(() =>{
+    getDeputados(urlAllDeputados, (body) => {
+        if (body) {
+            deputados = body
+            jsonIdCadastroUrlFotoDeputados = getDicIdDeputadosUrlFoto()
+        }
+    })
+}, 86400000)
+
 module.exports = router
