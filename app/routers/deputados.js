@@ -48,7 +48,7 @@ router.get('/deputados',(req, res, err)=> {
     var parametros = req.query
 
     //verifica se o usuario informou os parametros de filtro
-    if(!parametros.partido && !parametros.uf && !parametros.nome) {
+    if(!parametros.partido && !parametros.uf && !parametros.nome && !parametros.ideCadastro) {
         res.status(400).json({'error':'Nenhum dos parametros (uf, partido, nome) foi informado.'})
     }
     
@@ -72,7 +72,7 @@ router.get('/deputados',(req, res, err)=> {
  */
 router.get('/urlFotosDeputados', (req,res,err)=>{
     res.set('Content-Type', 'application/json')
-    
+
     if (req.query.ideCadastro){
             var newArray = jsonIdCadastroUrlFotoDeputados.dados.filter((element) => {
             return element.ideCadastro == req.query.ideCadastro
@@ -113,6 +113,10 @@ function filtrarDeputado(deputado /* Objeto do Deputado */, parametros /* Query 
     
     if(parametros.uf){
         retorno = retorno && (deputado.uf.toLowerCase() == parametros.uf.toLowerCase())
+    }
+
+    if(parametros.ideCadastro){
+        retorno = retorno && (deputado.ideCadastro == parametros.ideCadastro)
     }
     return retorno
 }
