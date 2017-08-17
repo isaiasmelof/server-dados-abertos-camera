@@ -35,7 +35,8 @@ router.get('/allDeputados',(req, res, err) => {
     uf: representa a unidade federativa do deputado.
     partido: sigla a que representa o partido no qual o deputado é filiado.
     nome: parte do nome que está contida no nome do deputado desejado. (contains)
-
+    ideCadastro: id unico de cadastro para o deputado 
+    
     Os parametros podem ser passados conforme é desejado, e são avaliados em um 'and'.
    
     Ex: Caso seja enviado os parametros uf e partido, o deputado só será retornado como resultado caso o partido e a uf estejam igual ao filtro. 
