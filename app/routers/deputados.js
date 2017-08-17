@@ -13,11 +13,11 @@ var deputados
 var jsonIdCadastroUrlFotoDeputados
 
 //Caso o objeto esteja nulo, é realizado a carga dos dados imediatamente
-if (!deputados) {
+if (!deputados || !jsonIdCadastroUrlFotoDeputados) {
     getDeputados(urlAllDeputados, (body) => {
         if (body) {
             deputados = body
-            dicIdDeputadosUrlFoto = getDicIdDeputadosUrlFoto()
+            jsonIdCadastroUrlFotoDeputados = getDicIdDeputadosUrlFoto()
         }
     })
 }
@@ -72,7 +72,15 @@ router.get('/deputados',(req, res, err)=> {
  */
 router.get('/urlFotosDeputados', (req,res,err)=>{
     res.set('Content-Type', 'application/json')
+    
+    if (req.query.ideCadastro){
+            var newArray = jsonIdCadastroUrlFotoDeputados.dados.filter((element) => {
+            return element.ideCadastro == req.query.ideCadastro
+        })
+        res.send(newArray)
+    }
     res.send(jsonIdCadastroUrlFotoDeputados)
+    
 })
 
 
@@ -82,7 +90,7 @@ function getDicIdDeputadosUrlFoto() {
     objJson.deputados.deputado.forEach(function(element) {
         retorno.push({'ideCadastro': element.ideCadastro, 'urlFoto' : element.urlFoto})
     })
-    return retorno
+    return {'dados': retorno}
 }
 
 /**
