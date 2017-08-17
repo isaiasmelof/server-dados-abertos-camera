@@ -21,6 +21,22 @@ const urlGetProposicoesVotadasEmPlenario = 'http://www.camara.leg.br/SitCamaraWS
 //Core da url que recupera os votos de uma proposicao  - esta deve ser concatenada com os parametros desejados.
 const urlGetVotosProposicao = 'http://www.camara.leg.br/SitCamaraWS/Proposicoes.asmx/ObterVotacaoProposicao?'
 
+
+
+var proposicoes_2017 
+
+
+if (!proposicoes_2017) {
+    getDadosByRequisicao(urlGetProposicoes+prepareUrlRequest({'sigla':'PL','ano':'2017'}, parametersResquestProposicoes), (body)=>{
+        proposicoes_2017 = body
+    })
+}
+
+router.get('/allPL2017', (req,res,err)=>{
+    res.set('Content-Type', 'application/json')
+    res.send(proposicoes_2017)
+})
+
 //Buscar proposicoes passando os parametros padrões disponiveis
 router.get('/proposicoes',(req, res, err) => {
     res.set('Content-Type', 'application/json')
@@ -143,4 +159,13 @@ function getDadosByRequisicao (url, getBody) {
         }
    })
 }
+
+setInterval(() =>{
+    getDadosByRequisicao(urlGetProposicoes+prepareUrlRequest({'sigla':'PL','ano':'2017'}, parametersResquestProposicoes), (body)=>{
+        if(body){
+            proposicoes_2017 = body
+        }  
+    })
+}, 86400000)
+
 module.exports = router
