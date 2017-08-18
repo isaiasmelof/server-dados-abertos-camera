@@ -3,14 +3,19 @@ const router = express.Router()
 const request = require('request')
 const parser = require('xml2json')
 
+
+
+
+
 //URL utilizada para recuperar os dados de deputados
 const urlAllDeputados = 'http://www.camara.leg.br/SitCamaraWS/Deputados.asmx/ObterDeputados'
 
-//Objeto JSON guardado em momoria no qual é armazenado a lista de deputados
+//Objeto JSON guardado em memoria no qual é armazenado a lista de deputados
 var deputados 
 
 //Objeto Json com o id de cadastro do Parlamentar e a sua respectiva url para sua fota.
 var jsonIdCadastroUrlFotoDeputados
+
 
 //Caso o objeto esteja nulo, é realizado a carga dos dados imediatamente
 if (!deputados || !jsonIdCadastroUrlFotoDeputados) {
@@ -36,7 +41,7 @@ router.get('/allDeputados',(req, res, err) => {
     partido: sigla a que representa o partido no qual o deputado é filiado.
     nome: parte do nome que está contida no nome do deputado desejado. (contains)
     ideCadastro: id unico de cadastro para o deputado 
-    
+    git ad  
     Os parametros podem ser passados conforme é desejado, e são avaliados em um 'and'.
    
     Ex: Caso seja enviado os parametros uf e partido, o deputado só será retornado como resultado caso o partido e a uf estejam igual ao filtro. 
@@ -49,21 +54,31 @@ router.get('/deputados',(req, res, err)=> {
     var parametros = req.query
 
     //verifica se o usuario informou os parametros de filtro
-    if(!parametros.partido && !parametros.uf && !parametros.nome && !parametros.ideCadastro) {
+    if(!parametros.partido && !parametros.uf && !parametros.nome && !parametros.ideCadastro && !parametros.index) {
         res.status(400).json({'error':'Nenhum dos parametros (uf, partido, nome) foi informado.'})
     }
     
     //transformando para um objeto JSON
     var objJson = JSON.parse(deputados)
     
+    if(parametros.index) {
+        var i = parametros.index
+        var dep = objJson.deputados.deputado[i]
+        if (dep) {
+            return res.send(dep)
+        }else{
+            return res.send({'error':'Não possivel recuperar os dados com o indice especificado'})
+        }
+    }
+
     var newArray = objJson.deputados.deputado.filter((deputado) => {
         return filtrarDeputado(deputado, parametros)
     })
 
     if(newArray.length > 0){
-        res.status(200).json(newArray)
+        return res.json(newArray)
     } else {
-        res.status(500).json({'erro':'Não possível recuperar dados de Deputados com os parâmetros enviados.'})
+        return res.json({'erro':'Não possível recuperar dados de Deputados com os parâmetros enviados.'})
     }
     
 })
@@ -88,6 +103,7 @@ router.get('/urlFotosDeputados', (req,res,err)=>{
 function getDicIdDeputadosUrlFoto() {
     var retorno = []
     var objJson = JSON.parse(deputados)
+
     objJson.deputados.deputado.forEach(function(element) {
         retorno.push({'ideCadastro': element.ideCadastro, 'urlFoto' : element.urlFoto})
     })
@@ -119,6 +135,7 @@ function filtrarDeputado(deputado /* Objeto do Deputado */, parametros /* Query 
     if(parametros.ideCadastro){
         retorno = retorno && (deputado.ideCadastro == parametros.ideCadastro)
     }
+
     return retorno
 }
 

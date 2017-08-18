@@ -34,7 +34,7 @@ if (!proposicoes_2017) {
 
 router.get('/allPL2017', (req,res,err)=>{
     res.set('Content-Type', 'application/json')
-    res.send(proposicoes_2017)
+    return res.send(proposicoes_2017)
 })
 
 //Buscar proposicoes passando os parametros padrões disponiveis
@@ -44,11 +44,11 @@ router.get('/proposicoes',(req, res, err) => {
     if(stringFiltros) {
         getDadosByRequisicao(urlGetProposicoes+stringFiltros, (body)=>{
             res.status(200)
-            res.send(body)
+            return  res.send(body)
         })
     }else{
         res.status(500)
-        res.send({'error':'Paramêtros invalidos enviados para o servidor'})
+        return res.send({'error':'Paramêtros invalidos enviados para o servidor'})
     }
     
 })
@@ -66,11 +66,11 @@ router.get('/proposicoesPorPalavraChave/:palavraChave',(req,res,err)=>{
             return proposicao.txtEmenta.includes(req.params.palavraChave)
         })
         res.status(200)
-        res.send(array)
+        return res.send(array)
     })
     }else{
         res.status(500)
-        res.send({'error':'Paramêtros invalidos enviados para o servidor'})
+        return res.send({'error':'Paramêtros invalidos enviados para o servidor'})
     }
 })
 
@@ -81,11 +81,11 @@ router.get('/proposicoesVotadasEmPlenario',(req,res,err)=> {
     if (stringFiltros) {
         getDadosByRequisicao(urlGetProposicoesVotadasEmPlenario+stringFiltros,(body)=> {
             res.status(200)
-            res.send(body)
+            return res.send(body)
         })
     }else{
         res.status(500)
-        res.send({'error':'Paramêtros invalidos enviados para o servidor'})
+        return res.send({'error':'Paramêtros invalidos enviados para o servidor'})
     }
 })
 
@@ -95,11 +95,11 @@ router.get('/votosProposicao', (req, res, err) => {
     if(stringFiltros) {
         getDadosByRequisicao(urlGetVotosProposicao+stringFiltros, (body)=>{
             res.status(200)
-            res.send(body)
+            return res.send(body)
         })
     }else{
         res.status(500)
-        res.send({'error':'Paramêtros invalidos enviados para o servidor'})
+        return res.send({'error':'Paramêtros invalidos enviados para o servidor'})
     }
 })
 
