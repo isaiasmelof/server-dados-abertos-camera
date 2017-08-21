@@ -55,7 +55,7 @@ router.get('/deputados',(req, res, err)=> {
 
     //verifica se o usuario informou os parametros de filtro
     if(!parametros.partido && !parametros.uf && !parametros.nome && !parametros.ideCadastro && !parametros.index) {
-        res.status(400).json({'error':'Nenhum dos parametros (uf, partido, nome) foi informado.'})
+        res.status(400).json({'error':'Nenhum dos parametros (uf, partido, nome,index) foi informado.'})
     }
     
     //transformando para um objeto JSON
